@@ -1,0 +1,2 @@
+INFO:     127.0.0.1:64667 - "GET /tables/by-slug/shipment_default_profile_v1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64668 - "GET /tables/by-slug/purchase_order_default_profile_v1 HTTP/1.1" 200 OK
