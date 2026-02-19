@@ -41,6 +41,7 @@ from backend import models
 from backend.rule_parser import validate_syntax, validate_rule_against_schema
 from backend.resolver_service import AttributeResolverService
 from backend.resolver_errors import ResolverConfigurationError, ResolverDataError
+from backend.security.auth_dependency import require_evaluate_token
 import uuid
 
 app = FastAPI(title="BRF+ Zen Enterprise Engine", version="2026.1")
@@ -478,7 +479,11 @@ def update_table(table_id: uuid.UUID, table: TableCreate, db: Session = Depends(
 
 
 @app.post("/evaluate", response_model=EvaluationResponse)
-def evaluate_rules(request: EvaluationRequest, db: Session = Depends(get_db)):
+def evaluate_rules(
+    request: EvaluationRequest,
+    db: Session = Depends(get_db),
+    _claims: dict = Depends(require_evaluate_token),
+):
     """
     Evaluates a specific decision table.
     """

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
@@ -77,14 +78,29 @@ class AttributeMetadata {
 }
 
 class RuleApiClient {
-  RuleApiClient({http.Client? client}) : _client = client ?? http.Client();
+  RuleApiClient({http.Client? client})
+      : _client = client ?? http.Client(),
+        _baseUrl = _resolveBaseUrl();
 
   final http.Client _client;
-  static const String _baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:8111',
-  );
-  String get baseUrl => _baseUrl;
+  final String _baseUrl;
+
+  static const String _defaultBaseUrl = 'http://localhost:8111';
+
+  static String _resolveBaseUrl() {
+    const compileTimeBase = String.fromEnvironment('API_BASE_URL');
+    if (compileTimeBase.isNotEmpty) {
+      return _normalize(compileTimeBase);
+    }
+    final runtimeBase = dotenv.env['API_BASE_URL']?.trim();
+    if (runtimeBase != null && runtimeBase.isNotEmpty) {
+      return _normalize(runtimeBase);
+    }
+    return _defaultBaseUrl;
+  }
+
+  static String _normalize(String raw) =>
+      raw.trim().replaceAll(RegExp(r'/+$'), '');
 
   Future<RuleTable> saveTable(RuleTable draft) async {
     final tablePayload = {

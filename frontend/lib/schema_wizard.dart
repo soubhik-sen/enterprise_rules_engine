@@ -709,6 +709,7 @@ class _SchemaEntryRowState extends State<_SchemaEntryRow> {
                         value:
                             optionKeys.contains(currentKey) ? currentKey : null,
                         isDense: true,
+                        isExpanded: true,
                         icon: const Icon(
                           Icons.keyboard_arrow_down,
                           size: 12,

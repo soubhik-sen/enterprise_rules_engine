@@ -3,8 +3,8 @@ from sqlalchemy import create_engine
 import os
 
 # Default to a local postgres for development if env not set
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://admin:QElc6lXUrtCwJzDNHmzwxdGiPtUBN5U4@dpg-d649vvshg0os73d1o6e0-a.oregon-postgres.render.com/decision_engine_i7ro")
-
+#DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://admin:QElc6lXUrtCwJzDNHmzwxdGiPtUBN5U4@dpg-d649vvshg0os73d1o6e0-a.oregon-postgres.render.com/decision_engine_i7ro")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://admin:0kpy04n0HoOIjYN9TOJGKzMP3tEZiuk7@dpg-d5jv5tt6ubrc7398ucg0-a.oregon-postgres.render.com/commexwise_1jak")
 _engine_kwargs = {
     # Prevent stale pooled connections from failing requests after DB restarts/idle timeouts.
     "pool_pre_ping": True,
