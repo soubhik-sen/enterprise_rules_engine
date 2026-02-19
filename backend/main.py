@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, OperationalError
 from functools import lru_cache
 from urllib.parse import quote
+import logging
 import os
 import httpx
 from backend.database import get_db
@@ -45,6 +46,7 @@ from backend.security.auth_dependency import require_evaluate_token
 import uuid
 
 app = FastAPI(title="BRF+ Zen Enterprise Engine", version="2026.1")
+logger = logging.getLogger(__name__)
 
 app.add_middleware(
     CORSMiddleware,
@@ -421,6 +423,15 @@ def proxy_object_attributes(object_type: str, scope: str | None = None):
             headers={"Authorization": f"Bearer {access_token}"},
             timeout=float(os.getenv("ATTRIBUTE_REGISTRY_TIMEOUT_SECONDS", "6")),
         )
+        if upstream_response.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+            logger.warning(
+                "attribute_registry_429 object_type=%s scope=%s upstream_url=%s headers=%s body=%s",
+                object_type,
+                params.get("scope"),
+                upstream_url,
+                dict(upstream_response.headers),
+                upstream_response.text,
+            )
     except ResolverConfigurationError as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
     except ResolverDataError as e:
