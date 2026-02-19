@@ -51,6 +51,11 @@ class EnterpriseStudio extends ConsumerWidget {
     final showOnboardingHints = ref.watch(showOnboardingHintsProvider);
     final apiClient = ref.read(apiClientProvider);
     final tableIo = TableIo(apiClient);
+    final schemaLifecycleKey = [
+      draft.id,
+      ...draft.inputSchema.map((e) => 'in:${e.id}:${e.key}:${e.type.name}'),
+      ...draft.outputSchema.map((e) => 'out:${e.id}:${e.key}:${e.type.name}'),
+    ].join('|');
 
     // Listen for simulation errors
     ref.listen(simulationResultProvider, (previous, next) {
@@ -358,10 +363,12 @@ class EnterpriseStudio extends ConsumerWidget {
                           child: SingleChildScrollView(child: SchemaWizard()),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: ColoredBox(
                           color: AppTheme.bg,
-                          child: RuleGrid(),
+                          child: RuleGrid(
+                            key: ValueKey('rule-grid:$schemaLifecycleKey'),
+                          ),
                         ),
                       ),
                       Container(
@@ -372,7 +379,9 @@ class EnterpriseStudio extends ConsumerWidget {
                             left: BorderSide(color: AppTheme.border),
                           ),
                         ),
-                        child: const Simulator(),
+                        child: Simulator(
+                          key: ValueKey('simulator:$schemaLifecycleKey'),
+                        ),
                       ),
                     ],
                   );
